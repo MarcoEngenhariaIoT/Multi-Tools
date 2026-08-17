@@ -1,17 +1,22 @@
+:: Multi Tools
+:: Ferramenta baseada no projeto de ENG0800
+:: Desenvolvedor:
+:: Eng. Marco Aurélio Machado
+
 @echo off
 chcp 65001 > nul
-title MultiTool
+title Marco Notebooks - Multi Tools - Versão 1.4 15/08/2026
 
-:M
-MODE 60,25
-COLOR 0A
+:: Tela cheia
+powershell -command "$wshell = New-Object -ComObject wscript.shell; $wshell.SendKeys('{F11}')"
+
+:: Menu
 CLS
-echo.  
-echo     ==================================================
-echo         PROGRAMA PARA CONFIGURAÇÃO E PERFORMANCE
-echo     ==================================================
-echo.    
-echo.   ...................................................
+COLOR 0A
+::																		   |
+set mensagem=             BEM VINDO À FERRAMENTA MULTI TOOLS!              ║
+GOTO MostrarQuadro
+:M
 echo.   
 echo.   [A] CRIAR PONTO DE RESTAURAÇÃO DO SISTEMA OPERACIONAL
 echo.   [B] CORRIGIR IMAGEM DE IMPLANTAÇÃO (PROCESSO EXTENSO)
@@ -23,6 +28,7 @@ echo.   [G] ABRIR ASSISTENTE DE RESTAURAÇÃO DO SISTEMA
 echo.   [H] VERIFICAR STATUS DO BitLocker
 echo.   [I] DESLIGAR BitLocker
 echo.   [J] INSTALAR TODOS OS DRIVERS
+echo.   [K] LIMPAR ARQUIVOS TEMPORÁRIOS
 echo.
 echo.   [Z] SAIR DO PROGRAMA
 
@@ -30,59 +36,165 @@ echo.   ...................................................
 echo.   SELECIONE A OPÇÃO [D] PARA ACELERAR O WINDOWS
 echo.   SELECIONE A OPÇÃO [G] PARA REVERTER AS ALTERAÇÕES
 echo. 
-echo.   Desenvolvido por ENG0800
-echo.   Versão Marco Notebooks 1.1 15/08/2026
+echo.   Baseado no projeto de ENG0800
+echo.   Versão Marco Notebooks 1.4.1 
+echo.  
+echo.  
 
-choice /c "ABCDEFGHIJZ" /n /m " Digite a opção desejada > "
+set /p opcao=" Digite a opção desejada > "
 
-:: O choice retorna: A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8, I=9, J=10, Z=11
-:: Verificamos do MAIOR para o MENOR
-if errorlevel 11 goto Z
-if errorlevel 10 goto J
-if errorlevel 9 goto I
-if errorlevel 8 goto H
-if errorlevel 7 goto G
-if errorlevel 6 goto F
-if errorlevel 5 goto E
-if errorlevel 4 goto D
-if errorlevel 3 goto C
-if errorlevel 2 goto B
-if errorlevel 1 goto A
+:: Converte para maiúsculas
+for %%i in (A B C D E F G H I J K Z) do if /i "%opcao%"=="%%i" goto %%i
+
+:: Se chegou aqui, opção inválida
+set mensagem=               OPÇÃO INVÁLIDA! TENTE NOTAMENTE!               ║
+goto MostrarQuadro
 goto M
 
+:: FUNÇÃO DO QUADRO PADRÃO
+:MostrarQuadro
+cls
+COLOR 0A
+echo.
+echo                          MARCO NOTEBOOKS
+echo.
+echo                            MULTI TOOLS
+echo.
+echo   ╔══════════════════════════════════════════════════════════════╗
+echo   ║                                                              ║
+echo   ║                                                              ║
+echo   ║                                                              ║
+echo   ║%mensagem%                           
+echo   ║                                                              ║
+echo   ║                                                              ║
+echo   ║                                                              ║
+echo   ╚══════════════════════════════════════════════════════════════╝
+echo.
+echo.
+goto M
+
+:: CRIAR PONTO DE RESTAURAÇÃO DO SISTEMA OPERACIONAL
 :A
-MODE 60,25
-COLOR 0F
-CLS
+COLOR 0A
+::																		   | Referência para o tamanho da msg
+set mensagem=           PONTO DE RESTAURAÇÃO CRIADO COM SUCESSO            ║
 reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore" /v "SystemRestorePointCreationFrequency" /t REG_DWORD /d 1 /f >nul 2>&1
 powershell -ExecutionPolicy Unrestricted -NoProfile Enable-ComputerRestore -Drive 'C:\', 'D:\', 'E:\', 'F:\', 'G:\' >nul 2>&1
-powershell -ExecutionPolicy Unrestricted -NoProfile Checkpoint-Computer -Description 'PONTO_DE_RESTAURAÇÃO_ENGENHARIA0800' >nul 2>&1
-echo           PONTO DE RESTAURACAO CRIADO COM SUCESSO!
-PAUSE
-GOTO M
+powershell -ExecutionPolicy Unrestricted -NoProfile Checkpoint-Computer -Description 'By Multi Tools' >nul 2>&1
+goto MostrarQuadro
 
+:: CORRIGIR IMAGEM DE IMPLANTAÇÃO
 :B
-MODE 60,25
-COLOR 0F
-CLS
-DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH
-PAUSE
-GOTO M
+set mensagem=        IMAGEM DE IMPLANTAÇÃO CORRIGIDA COM SUCESSO!          ║
+COLOR 0A
+::DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH
+goto MostrarQuadro
 
+:: VERIFICAR E CORRIGIR ARQUIVOS DE SISTEMA - WINDOWS
 :C
-MODE 60,25
-COLOR 0F
-CLS
-SFC /SCANNOW
-CLS
-echo INTEGRIDADE DO SISTEMA VERIFICADA!
-PAUSE
-GOTO M
+set mensagem=            SISTEMA WINDOWS CORRIGIDO COM SUCESSO!            ║
+COLOR 0A
+::SFC /SCANNOW
+goto MostrarQuadro
 
-:D
-MODE 60,25
-COLOR 0F
+:: ATIVAR A CENTRAL DE NOTIFICAÇÕES DO WINDOWS
+:E
+set mensagem=   CENTRAL DE NOTIFICAÇÕES DO WINDOWS ATIVADA COM SUCESSO!    ║
+COLOR 0A
+REG ADD "HKCU\Software\Policies\Microsoft\Windows\Explorer" /v "DisableNotificationCenter" /t REG_DWORD /d 0 /f
+goto MostrarQuadro
+
+:: EXECUTAR ATIVADOR DE CHAVE PARA WINDOWS E OFFICE
+:F
+set mensagem=            SCRIPT DE ATIVAÇÃO ABERTO COM SUCESSO!            ║
+COLOR 0A
+powershell.exe -ExecutionPolicy Bypass -File "%~dp0chave.ps1"
+goto MostrarQuadro
+
+:: ABRIR ASSISTENTE DE RESTAURAÇÃO DO SISTEMA
+:G
+set mensagem=        ASSISTENTE DE RESTAURAÇÃO ABERTO COM SUCESSO!         ║
+COLOR 0A
+rstrui.exe
+goto MostrarQuadro
+
+:: VERIFICAR STATUS DO BitLocker
+:H
 CLS
+set mensagem=         STATUS DO BitLocker VERIFICADO COM SUCESSO!          ║
+COLOR 0A
+manage-bde.exe -status
+pause
+goto MostrarQuadro
+
+:I
+set mensagem=              VERIFIQUE O STATUS DO BitLocker!                ║
+COLOR 0A
+cls
+echo.
+echo   Digite a unidade com BitLocker
+echo.
+set /p unidade=" Unidade: "
+
+:: Remove espaços
+set unidade=%unidade: =%
+
+:: 1. Verifica se digitou algo
+if "%unidade%"=="" goto :erro_unidade
+
+:: 2. Pega a primeira letra e o resto
+set primeira_letra=%unidade:~0,1%
+set resto=%unidade:~1%
+
+:: 3. Verifica se a primeira letra é A-Z (apenas 1 caractere)
+echo %primeira_letra% | findstr /i [A-Z] >nul
+if errorlevel 1 goto :erro_unidade
+
+:: 4. Verifica se o resto é vazio OU é ":"
+if not "%resto%"=="" (
+    if not "%resto%"==":" goto :erro_unidade
+)
+
+:: Adiciona : se não tiver
+if "%resto%"=="" set unidade=%primeira_letra%:
+
+manage-bde.exe %unidade% -off
+pause
+goto MostrarQuadro
+
+:erro_unidade
+echo.
+echo   Unidade inválida! Digite apenas uma letra de A a Z.
+echo   Exemplos: c  ou  c:
+echo.
+pause
+goto I
+
+:: INSTALAR TODOS OS DRIVERS
+:J
+set mensagem=               DRIVERS INSTALADOS COM SUCESSO!                ║
+COLOR 0A
+driverquery /v
+goto MostrarQuadro
+
+:: LIMPAR ARQUIVOS TEMPORÁRIOS
+:K
+set mensagem=                LIMPEZA EXECUTADA COM SUCESSO!                ║
+COLOR 0A
+:: Limpa Temp do Windows
+del /s /f /q "%systemroot%\Temp\*.*" 2>nul
+rd /s /q "%systemroot%\Temp" 2>nul
+mkdir "%systemroot%\Temp" 2>nul
+:: Limpa Temp do perfil do usuário
+del /s /f /q "%localappdata%\Temp\*.*" 2>nul
+rd /s /q "%localappdata%\Temp" 2>nul
+mkdir "%localappdata%\Temp" 2>nul
+goto MostrarQuadro
+
+:: ATIVAR AS CONFIGURAÇÕES DE ALTO DESEMPENHO
+:D
+set mensagem=                WINDOWS OTIMIZADO COM SUCESSO!                ║
+COLOR 0A
 POWERCFG /H /TYPE REDUCED
 REG ADD "HKCU\SOFTWARE\MICROSOFT\WINDOWS\CURRENTVERSION\EXPLORER\ADVANCED" /V DESKTOPLIVEPREVIEWHOVERTIME /T REG_DWORD /D 0 /F
 REG ADD "HKLM\SYSTEM\CURRENTCONTROLSET\SERVICES\DIAGTRACK" /V START /T REG_DWORD /D 4 /F
@@ -174,13 +286,13 @@ REG ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "L
 REG ADD "HKCU\Control Panel\UnsupportedHardwareNotificationCache" /v "SV1" /t REG_DWORD /d "0" /f
 REG ADD "HKCU\Control Panel\UnsupportedHardwareNotificationCache" /v "SV2" /t REG_DWORD /d "0" /f
 REG ADD "HKCU\Control Panel\Desktop" /v "PaintDesktopVersion" /t REG_DWORD /d "0" /f
-REG ADD "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+REG ADD "HKCU\Software\Classes\ID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
 REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Remote Assistance" /v "fAllowToGetHelp" /t REG_DWORD /d 0 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v "EnableLUA" /t REG_DWORD /d 0 /f
 REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "ClearPageFileAtShutdown" /t REG_DWORD /d 0 /f
 REG ADD "HKCU\Software\Policies\Microsoft\Windows\Explorer" /v "DisableSearchBoxSuggestions" /t REG_DWORD /d 1 /f
 REG ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\SearchSettings" /v "IsDynamicSearchBoxEnabled" /t REG_DWORD /d 0 /f
-REG ADD "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f
+REG ADD "HKCU\Software\Classes\ID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f
 REG ADD "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v "VisualFXSetting" /t REG_DWORD /d 2 /f
 REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v "VisualFXSetting" /t REG_DWORD /d 2 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" /v "SearchOrderConfig" /t REG_DWORD /d 0 /f
@@ -228,100 +340,5 @@ REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Solucionador\shell\07entry\co
 REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Reiniciar Explorer" /v "icon" /d "explorer.exe" /f
 REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Reiniciar Explorer" /v "Position" /d "Top" /f
 REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Reiniciar Explorer" /v "MUIVerb" /d "Reiniciar Explorer" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Reiniciar Explorer\command" /d "cmd.exe /c taskkill /f /im explorer.exe  & start explorer.exe" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Executar Dism" /v "icon" /d "WmiPrvSE.exe" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Executar Dism" /v "MUIVerb" /d "Restaurar Imagem do Sistema" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Executar Dism" /v "Position" /d "Top" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Executar Dism" /v "HasLUAShield" /d "" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\shell\Executar Dism\command"  /d "PowerShell -windowstyle hidden -command \"Start-Process cmd -ArgumentList '/s,/k, Dism /Online /Cleanup-Image /RestoreHealth' -Verb runAs\"" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\shell\PontoRestauracao" /v "Icon" /d "SystemPropertiesProtection.exe" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\shell\PontoRestauracao" /v "MUIVerb" /d "Criar Ponto de Restauracao" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\shell\PontoRestauracao" /v "Position" /d "Top" /f
-REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\shell\PontoRestauracao\command" /d "PowerShell -windowstyle hidden -command \"Start-Process cmd -ArgumentList '/s,/c, PowerShell Checkpoint-Computer -Description \"Manual\" -RestorePointType \"MODIFY_SETTINGS\"' -Verb runAs\"" /f
-REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /v "SystemRestorePointCreationFrequency" /t REG_DWORD /d 0 /f
-
-@echo off
-echo Limpando a pasta Temp do usuário...
-
-:: Limpa Temp do Windows
-del /s /f /q "%systemroot%\Temp\*.*"
-rd /s /q "%systemroot%\Temp"
-mkdir "%systemroot%\Temp"
-
-:: Limpa Temp do perfil do usuário
-del /s /f /q "%localappdata%\Temp\*.*"
-rd /s /q "%localappdata%\Temp"
-mkdir "%localappdata%\Temp"
-cls
-
-echo Concluído!
-
-pause
-cls
-echo OTIMIZADO COM SUCESSO!
-PAUSE
-CLS
-GOTO M
-
-:E
-MODE 60,25
-COLOR 0F
-CLS
-REG ADD "HKCU\Software\Policies\Microsoft\Windows\Explorer" /v "DisableNotificationCenter" /t REG_DWORD /d 0 /f
-cls
-echo CENTRAL DE NOTIFICACOES ATIVADA !
-PAUSE
-CLS
-GOTO M
-
-:F
-MODE 60,25
-COLOR 0F
-CLS
-powershell.exe -ExecutionPolicy Bypass -File "%~dp0chave.ps1"
-PAUSE
-CLS
-GOTO M
-
-:G
-MODE 60,25
-COLOR 0F
-CLS
-rstrui.exe
-PAUSE
-CLS
-GOTO M
-
-:H
-MODE 60,25
-COLOR 0F
-CLS
-manage-bde.exe -status
-PAUSE
-CLS
-GOTO M
-
-:I
-MODE 60,25
-COLOR 0F
-CLS
-echo Digite a unidade com BitLocker "exemplo c:"
-set /p unidade=
-CLS
-manage-bde.exe %unidade% -off
-PAUSE
-CLS
-GOTO M
-
-:J
-MODE 60,25
-COLOR 0F
-CLS
-driverquery /v
-PAUSE
-CLS
-GOTO M
-
-:Z
-CLS
-EXIT
+REG ADD "HKEY_CLASSES_ROOT\DesktopBackground\Shell\Reiniciar Explorer\
+goto MostrarQuadro
