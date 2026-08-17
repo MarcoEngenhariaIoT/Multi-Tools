@@ -1,4 +1,3 @@
-```markdown
 # Multi Tools
 
 Ferramenta utilitária para manutenção e reparo de sistemas Windows, desenvolvida com base no projeto de ENG0800. O Multi Tools reúne funcionalidades essenciais para diagnóstico, otimização e correção de problemas comuns em notebooks e PCs.
@@ -59,6 +58,3 @@ E-mail: marconotebooks@gmail.com
 - Algumas funcionalidades exigem conexão com a internet.
 
 # UTILIZE ESTA FERRAMENTA POR CONTA E RISCO.
-```
-
-O arquivo está pronto para ser salvo como `README.md` ou mantido como `.txt`, conforme sua preferência.
